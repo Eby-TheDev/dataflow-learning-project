@@ -11,6 +11,7 @@ import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.Write.WriteDisposition;
 import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.values.PCollection;
+import org.apache.beam.sdk.values.PCollectionView;
 
 import com.google.api.services.bigquery.model.TableRow;
 import com.learning.beam.model.Car;
@@ -19,8 +20,19 @@ public class BQWrite {
 
 	private static final String tableSpec = "user-project-265117:mybqdataset.avro_load";
 
-	public static <T> void write(PCollection<T> ip) {
+	public static <T> void write(PCollection<T> ip,PCollectionView<String> status) {
 
+		ip=ip.apply(ParDo.of(new DoFn<T, T>() {
+			
+			@ProcessElement
+			public void process(ProcessContext c,OutputReceiver<T> e) {
+				T r= c.element();
+				String st = c.sideInput(status);
+				if("SUCCESS".equals(st))
+					e.output(r);
+			}
+			
+		}).withSideInputs(status));
 		PCollection<TableRow> rows = ip.apply("Create TableRow", ParDo.of(new DoFn<T, TableRow>() {
 
 			@ProcessElement
@@ -38,8 +50,18 @@ public class BQWrite {
 
 		}));
 
-		rows.apply(BigQueryIO.writeTableRows().to(tableSpec).withCreateDisposition(CreateDisposition.CREATE_NEVER)
-				.withWriteDisposition(WriteDisposition.WRITE_TRUNCATE));
+		rows.apply(ParDo.of(new DoFn<TableRow, TableRow>() {
+			
+			@ProcessElement
+			public void process(@Element TableRow r) {
+				System.out.println(r.toString());
+			}
+		}));
+		/*
+		 * rows.apply(BigQueryIO.writeTableRows().to(tableSpec).withCreateDisposition(
+		 * CreateDisposition.CREATE_NEVER)
+		 * .withWriteDisposition(WriteDisposition.WRITE_TRUNCATE));
+		 */
 	}
 
 }
