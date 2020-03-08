@@ -17,20 +17,18 @@
  */
 package com.learning.beam;
 
-import org.apache.avro.specific.SpecificData;
-import org.apache.avro.specific.SpecificRecord;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.AvroCoder;
-import org.apache.beam.sdk.io.AvroIO;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
-import org.apache.beam.sdk.transforms.Count;
-import org.apache.beam.sdk.transforms.DoFn;
+import org.apache.beam.sdk.transforms.Create;
 import org.apache.beam.sdk.transforms.Filter;
-import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.transforms.ParDo;
+import org.apache.beam.sdk.transforms.View;
+import org.apache.beam.sdk.transforms.ViewFn;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.PCollectionList;
+import org.apache.beam.sdk.values.PCollectionView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,8 +69,12 @@ public class StarterPipeline {
 		 * result.get(1).apply(AvroIO.write(Car.class).to(options.getOutputDup()).
 		 * withSuffix(".avro"));
 		 */
+		
+		PCollectionView<String> statusSuccess = p.apply(Create.of("FAIL")).apply(View.asSingleton());
 
-		BQWrite.write(result.get(0));
+		BQWrite.write(result.get(0),statusSuccess);
+		
+
 
 		p.run().waitUntilFinish();
 	}
