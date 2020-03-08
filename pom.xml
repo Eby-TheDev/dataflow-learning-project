@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.learning.beam</groupId>
+	<artifactId>example-beam-cars-project</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<properties>
+		<beam.version>2.16.0</beam.version>
+
+		<maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+		<maven-exec-plugin.version>1.6.0</maven-exec-plugin.version>
+		<slf4j.version>1.7.25</slf4j.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>schema</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>${project.basedir}/src/main/resources/</sourceDirectory>
+							<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+							<stringType>String</stringType>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>com.learning.beam.StarterPipeline</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.1</version>
+				<configuration>
+					<finalName>cars-beam-executable-${project.version}</finalName>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>${maven-exec-plugin.version}</version>
+					<configuration>
+						<cleanupDaemonThreads>false</cleanupDaemonThreads>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.beam</groupId>
+			<artifactId>beam-sdks-java-core</artifactId>
+			<version>${beam.version}</version>
+		</dependency>
+
+		<!-- By default, the starter project has a dependency on the Beam DirectRunner 
+			to enable development and testing of pipelines. To run on another of the 
+			Beam runners, add its module to this pom.xml according to the runner-specific 
+			setup instructions on the Beam website: http://beam.apache.org/documentation/#runners -->
+		<dependency>
+			<groupId>org.apache.beam</groupId>
+			<artifactId>beam-runners-direct-java</artifactId>
+			<version>${beam.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.beam</groupId>
+			<artifactId>beam-sdks-java-io-google-cloud-platform</artifactId>
+			<version>${beam.version}</version>
+		</dependency>
+
+
+		<!-- BeanIO dependency -->
+		<dependency>
+			<groupId>org.beanio</groupId>
+			<artifactId>beanio</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.beam</groupId>
+			<artifactId>beam-runners-google-cloud-dataflow-java</artifactId>
+			<version>${beam.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- avro dependency -->
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>1.9.1</version>
+		</dependency>
+
+		<!-- slf4j API frontend binding with JUL backend -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+	</dependencies>
+</project>

@@ -1,0 +1,18 @@
+<beanio xmlns="http://www.beanio.org/2012/03" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd">
+
+  <stream name="cars" format="csv">
+    <record name="cars" class="com.learning.beam.model.Car">
+      <field name="Car" type="string"/>
+      <field name="MPG" type="double" />
+      <field name="Cylinders" type="int" />
+      <field name="Displacement" type="double" />
+      <field name="Horsepower" type="double" />
+      <field name="Weight" type="double" />
+      <field name="Acceleration" type="double" />
+      <field name="Model" type="int" />
+      <field name="Origin" type="string" />
+    </record>
+  </stream>
+</beanio>

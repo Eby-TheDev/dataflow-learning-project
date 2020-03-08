@@ -1,0 +1,15 @@
+{"namespace": "com.learning.beam.model",
+ "type": "record",
+ "name": "Car",
+ "fields": [
+     {"name": "Car", "type": "string"},
+     {"name": "MPG",  "type": "double"},
+     {"name": "Cylinders", "type": "int"},
+     {"name": "Displacement",  "type": "double"},
+     {"name": "Horsepower", "type": "double"},
+     {"name": "Weight", "type": "double"},
+     {"name": "Acceleration",  "type": "double"},
+     {"name": "Model", "type": "int"},
+     {"name": "Origin", "type": "string"}
+ ]
+}
